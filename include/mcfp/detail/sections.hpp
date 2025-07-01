@@ -40,8 +40,6 @@ namespace mcfp::detail
 class section
 {
   public:
-	using option_base = detail::option_base;
-
 	template <typename... Options>
 	section(std::string_view name, Options... options)
 		: m_name(name)
