@@ -86,14 +86,12 @@ class config
 		requires(std::is_base_of_v<option_base, Options> and ...)
 	config &init(std::string_view usage, Options... options)
 	{
-		using std::operator""sv;
-
 		m_sections.clear();
 
 		m_usage = usage;
 		m_ignore_unknown = false;
 
-		section(""sv, std::forward<Options>(options)...);
+		section("", std::forward<Options>(options)...);
 
 		for (auto &f : get_section_factories())
 		{
