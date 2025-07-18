@@ -28,6 +28,7 @@
 
 #include <cassert>
 #include <filesystem>
+#include <sstream>
 #include <string>
 #include <type_traits>
 
@@ -102,10 +103,16 @@ struct option_traits<T, typename std::enable_if_t<std::is_arithmetic_v<T>>>
 	static std::string to_string(const T &value)
 	{
 		char b[32];
-		auto r = std::to_chars(b, b + sizeof(b), value);
-		if (r.ec != std::errc())
-			throw std::system_error(std::make_error_code(r.ec));
-		return { b, r.ptr };
+		#if defined(__APPLE__) && defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__) && (__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ < 130300)
+			std::stringstream ss;
+			ss << value;
+			return ss.str();
+		#else
+			auto r = std::to_chars(b, b + sizeof(b), value);
+			if (r.ec != std::errc())
+				throw std::system_error(std::make_error_code(r.ec));
+			return { b, r.ptr };
+		#endif
 	}
 };
 
