@@ -59,74 +59,11 @@ enum class config_error
 	config_file_not_found            /**< The specified config file was not found */
 };
 /**
- * @brief The implementation for config_category error messages
- *
- */
-class config_category_impl : public std::error_category
-{
-  public:
-	/**
-	 * @brief User friendly name
-	 *
-	 * @return const char*
-	 */
-
-	[[nodiscard]] const char *name() const noexcept override
-	{
-		return "configuration";
-	}
-
-	/**
-	 * @brief Provide the error message as a string for the error code @a ev
-	 *
-	 * @param ev The error code
-	 * @return std::string
-	 */
-
-	[[nodiscard]] std::string message(int ev) const override
-	{
-		switch (static_cast<config_error>(ev))
-		{
-			case config_error::unknown_option:
-				return "unknown option";
-			case config_error::option_does_not_accept_argument:
-				return "option does not accept argument";
-			case config_error::missing_argument_for_option:
-				return "missing argument for option";
-			case config_error::option_not_specified:
-				return "option was not specified";
-			case config_error::invalid_config_file:
-				return "config file contains a syntax error";
-			case config_error::wrong_type_cast:
-				return "the implementation contains a type cast error";
-			case config_error::config_file_not_found:
-				return "the specified config file was not found";
-			case config_error::wrong_type_cast_flag:
-				return "the value assigned in a config file to a flag option was not 'true', 'false' or an integral numerical value";
-		}
-	}
-
-	/**
-	 * @brief Return whether two error codes are equivalent, always false in this case
-	 *
-	 */
-
-	[[nodiscard]] bool equivalent(const std::error_code & /*code*/, int /*condition*/) const noexcept override
-	{
-		return false;
-	}
-};
-
-/**
  * @brief Return the implementation for the config_category
  *
  * @return std::error_category&
  */
-inline std::error_category &config_category()
-{
-	static config_category_impl instance;
-	return instance;
-}
+std::error_category &config_category();
 
 /**
  * @brief Create an std::error_code for our config_error enum
@@ -158,7 +95,7 @@ namespace std
 {
 
 template <> // NOLINT(bugprone-std-namespace-modification,cert-dcl58-cpp)
-struct is_error_condition_enum<mcfp::config_error>
+struct is_error_code_enum<mcfp::config_error>
 	: public true_type
 {
 };

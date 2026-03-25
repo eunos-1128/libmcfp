@@ -46,6 +46,52 @@
 namespace mcfp
 {
 
+// --------------------------------------------------------------------
+
+class config_category_impl : public std::error_category
+{
+  public:
+	[[nodiscard]] const char *name() const noexcept override
+	{
+		return "configuration";
+	}
+
+	[[nodiscard]] std::string message(int ev) const override
+	{
+		switch (static_cast<config_error>(ev))
+		{
+			case config_error::unknown_option:
+				return "unknown option";
+			case config_error::option_does_not_accept_argument:
+				return "option does not accept argument";
+			case config_error::missing_argument_for_option:
+				return "missing argument for option";
+			case config_error::option_not_specified:
+				return "option was not specified";
+			case config_error::invalid_config_file:
+				return "config file contains a syntax error";
+			case config_error::wrong_type_cast:
+				return "the implementation contains a type cast error";
+			case config_error::config_file_not_found:
+				return "the specified config file was not found";
+			case config_error::wrong_type_cast_flag:
+				return "the value assigned in a config file to a flag option was not 'true', 'false' or an integral numerical value";
+		}
+		return "unknown configuration error";
+	}
+
+	[[nodiscard]] bool equivalent(const std::error_code & /*code*/, int /*condition*/) const noexcept override
+	{
+		return false;
+	}
+};
+
+std::error_category &config_category()
+{
+	static config_category_impl instance;
+	return instance;
+}
+
 #if defined(_WIN32)
 /// @brief Get the width in columns of the current terminal
 /// @return number of columns of the terminal
