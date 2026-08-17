@@ -107,6 +107,16 @@ std::error_category &config_category()
 
 thread_local std::string config::s_last_option;
 
+std::string config::get_last_option() const
+{
+	return s_last_option;
+}
+
+void config::set_last_option(std::string_view name)
+{
+	s_last_option = name;
+}
+
 void config::parse(int argc, const char *const argv[])
 {
 	std::error_code ec;

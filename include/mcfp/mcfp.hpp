@@ -170,10 +170,7 @@ MCFP_EXPORT class config
 	 *
 	 * @return std::string The last parsed or requested option
 	 */
-	[[nodiscard]] std::string get_last_option() const
-	{
-		return s_last_option;
-	}
+	[[nodiscard]] std::string get_last_option() const;
 
 	/**
 	 * @brief Simply return true if the option with \a name has a value assigned
@@ -244,7 +241,7 @@ MCFP_EXPORT class config
 		using return_type = std::remove_cv_t<T>;
 
 		// store name for inspection later on
-		s_last_option = name;
+		set_last_option(name);
 
 		return_type result{};
 		auto opt = get_option(name);
@@ -546,6 +543,7 @@ MCFP_EXPORT class config
 
 	std::vector<std::string> m_operands;
 	std::vector<std::unique_ptr<section>> m_sections;
+	static void set_last_option(std::string_view name);
 	static thread_local std::string s_last_option;
 
 	/// @endcond
@@ -559,7 +557,7 @@ MCFP_EXPORT class config
  *
  * If the type of \a T is a container (std::vector e.g.) the option can be
  * specified multiple times on the command line.
- * 
+ *
  * The type \a T cannot be a bool, use void for flags.
  *
  * The name \a name may end with a comma and a single character. This last
